@@ -24,11 +24,18 @@ const UserCard = ({ user, rank, onRefresh, onDelete }) => {
                     </div>
                 </div>
                 <div className="actions">
+                    <button 
+                        onClick={() => window.open(`https://leetcode.com/u/${user.leetcodeUsername}/`, '_blank')}
+                        className="view-profile"
+                        title={`View ${user.realName || user.leetcodeUsername}'s LeetCode profile`}
+                    >
+                        👁️ View Profile
+                    </button>
                     <button onClick={() => onRefresh(user.leetcodeUsername)}>
-                        Refresh
+                        🔄 Refresh
                     </button>
                     <button onClick={() => onDelete(user.leetcodeUsername)} className="delete">
-                        Delete
+                        🗑️ Delete
                     </button>
                 </div>
             </div>

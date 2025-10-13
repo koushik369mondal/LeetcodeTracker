@@ -242,19 +242,28 @@ body {
 
 .actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .actions button {
-    padding: 8px 20px;
+    padding: 8px 12px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 0.85rem;
     transition: transform 0.2s;
+    flex: 1;
+    min-width: fit-content;
 }
 
-.actions button:first-child {
+.actions button.view-profile {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.actions button:not(.view-profile):not(.delete) {
     background: #4CAF50;
     color: white;
 }
@@ -266,6 +275,11 @@ body {
 
 .actions button:hover {
     transform: scale(1.05);
+}
+
+.actions button.view-profile:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
 }
 
 .loading {
@@ -283,6 +297,16 @@ body {
 
     .stats-container {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .actions {
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .actions button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
     }
 
     .add-user-container form {
