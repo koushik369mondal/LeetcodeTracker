@@ -47,6 +47,18 @@ function App() {
         }
     };
 
+    const handleRefreshAll = async () => {
+        try {
+            const result = await api.refreshAllUsers();
+            console.log('Refresh all completed:', result);
+            fetchUsers(); // Refresh the user list after bulk update
+            return result;
+        } catch (error) {
+            console.error('Error refreshing all users:', error);
+            throw error;
+        }
+    };
+
     const handleDelete = async (username) => {
         if (window.confirm(`Are you sure you want to delete ${username}?`)) {
             try {
@@ -69,6 +81,7 @@ function App() {
             <Leaderboard
                 users={users}
                 onRefresh={handleRefresh}
+                onRefreshAll={handleRefreshAll}
                 onDelete={handleDelete}
             />
         </div>

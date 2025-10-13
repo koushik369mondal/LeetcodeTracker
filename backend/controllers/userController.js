@@ -249,3 +249,115 @@ export const deleteUser = async (req, res) => {
         });
     }
 };
+
+/**
+ * Refresh all users' stats from LeetCode API
+ */
+export const refreshAllUsers = async (req, res) => {
+    try {
+        console.log('Starting bulk refresh of all users...');
+        
+        // Get all users from database
+        const users = await User.find();
+        
+        if (users.length === 0) {
+            return res.status(200).json({
+                message: 'No users found to refresh',
+                results: []
+            });
+        }
+
+        console.log(`Found ${users.length} users to refresh`);
+        
+        const results = [];
+        let successCount = 0;
+        let failureCount = 0;
+
+        // Process each user sequentially to avoid overwhelming the API
+        for (const user of users) {
+            try {
+                console.log(`Refreshing user: ${user.leetcodeUsername}`);
+                
+                // Fetch updated stats from LeetCode API
+                const stats = await fetchLeetCodeStats(user.leetcodeUsername);
+                
+                // Store previous stats for progress calculation
+                const previousStats = {
+                    totalSolved: user.totalSolved,
+                    easySolved: user.easySolved,
+                    mediumSolved: user.mediumSolved,
+                    hardSolved: user.hardSolved
+                };
+
+                // Update user with new stats
+                user.realName = stats.realName || user.realName || user.leetcodeUsername;
+                user.totalSolved = stats.totalSolved;
+                user.easySolved = stats.easySolved;
+                user.mediumSolved = stats.mediumSolved;
+                user.hardSolved = stats.hardSolved;
+                user.ranking = stats.ranking;
+                user.acceptanceRate = stats.acceptanceRate;
+                user.lastUpdated = new Date();
+
+                await user.save();
+
+                // Calculate progress
+                const progress = {
+                    totalSolved: stats.totalSolved - previousStats.totalSolved,
+                    easySolved: stats.easySolved - previousStats.easySolved,
+                    mediumSolved: stats.mediumSolved - previousStats.mediumSolved,
+                    hardSolved: stats.hardSolved - previousStats.hardSolved
+                };
+
+                results.push({
+                    username: user.leetcodeUsername,
+                    realName: user.realName,
+                    status: 'success',
+                    progress,
+                    stats: {
+                        totalSolved: stats.totalSolved,
+                        easySolved: stats.easySolved,
+                        mediumSolved: stats.mediumSolved,
+                        hardSolved: stats.hardSolved
+                    }
+                });
+
+                successCount++;
+                console.log(`✓ Successfully refreshed: ${user.leetcodeUsername}`);
+
+            } catch (userError) {
+                console.error(`✗ Failed to refresh ${user.leetcodeUsername}:`, userError.message);
+                
+                results.push({
+                    username: user.leetcodeUsername,
+                    realName: user.realName || user.leetcodeUsername,
+                    status: 'failed',
+                    error: userError.message
+                });
+
+                failureCount++;
+            }
+
+            // Add small delay between requests to be respectful to the API
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        console.log(`Bulk refresh completed: ${successCount} success, ${failureCount} failures`);
+
+        res.status(200).json({
+            message: `Refreshed ${successCount}/${users.length} users successfully`,
+            summary: {
+                total: users.length,
+                success: successCount,
+                failed: failureCount
+            },
+            results
+        });
+
+    } catch (error) {
+        console.error('Error in refreshAllUsers:', error);
+        res.status(500).json({ 
+            message: 'Internal server error during bulk refresh' 
+        });
+    }
+};

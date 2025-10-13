@@ -79,3 +79,17 @@ export const deleteUser = async (username) => {
         throw error;
     }
 };
+
+export const refreshAllUsers = async () => {
+    try {
+        console.log('Starting bulk refresh of all users...');
+        const response = await axios.put(`${API_URL}/users/refresh-all`, {}, {
+            timeout: 300000 // 5 minutes timeout for bulk operation
+        });
+        console.log('Bulk refresh completed:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error in refreshAllUsers API call:', error);
+        throw error;
+    }
+};
