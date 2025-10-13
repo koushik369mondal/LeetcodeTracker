@@ -39,7 +39,8 @@ const providers = [
         mediumSolved,
         hardSolved,
         ranking: data.profile?.ranking || 0,
-        acceptanceRate: parseFloat(acceptanceRate)
+        acceptanceRate: parseFloat(acceptanceRate),
+        realName: data.profile?.realName || data.username || ''
       };
     }
   },
@@ -67,7 +68,8 @@ const providers = [
         mediumSolved: getCount('Medium'),
         hardSolved: getCount('Hard'),
         ranking: data.profile?.ranking || 0,
-        acceptanceRate: parseFloat(acceptanceRate)
+        acceptanceRate: parseFloat(acceptanceRate),
+        realName: data.profile?.realName || data.username || ''
       };
     }
   },
@@ -83,7 +85,8 @@ const providers = [
       mediumSolved: parseInt(data.mediumSolved) || 0,
       hardSolved: parseInt(data.hardSolved) || 0,
       ranking: parseInt(data.ranking) || 0,
-      acceptanceRate: parseFloat(data.acceptanceRate) || 0
+      acceptanceRate: parseFloat(data.acceptanceRate) || 0,
+      realName: data.profile?.realName || data.realName || data.username || ''
     })
   }
 ];

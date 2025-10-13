@@ -3,7 +3,8 @@ const UserCard = ({ user, rank, onRefresh, onDelete }) => {
         <div className="user-card">
             <div className="rank-badge">{rank}</div>
             <div className="user-info">
-                <h3>{user.leetcodeUsername}</h3>
+                <h3>{user.realName || user.leetcodeUsername}</h3>
+                <p className="username">@{user.leetcodeUsername}</p>
                 <div className="stats-container">
                     <div className="stat">
                         <span className="label">Total:</span>

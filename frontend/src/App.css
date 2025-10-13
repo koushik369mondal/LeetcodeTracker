@@ -130,8 +130,15 @@ body {
 
 .user-info h3 {
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     font-size: 1.3rem;
+}
+
+.user-info .username {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-style: italic;
 }
 
 .stats-container {

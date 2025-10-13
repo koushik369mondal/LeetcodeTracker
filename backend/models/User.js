@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
+    realName: {
+        type: String,
+        required: true,
+        trim: true
+    },
     leetcodeUsername: {
         type: String,
         required: true,

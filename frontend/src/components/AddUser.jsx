@@ -11,7 +11,7 @@ const AddUser = ({ onUserAdded }) => {
         setError('');
 
         try {
-            await onUserAdded(username); // send raw string; backend will parse URL to username
+            await onUserAdded(username); // send raw string; backend will parse URL to username and fetch realName from API
             setUsername('');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to add user');

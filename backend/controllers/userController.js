@@ -67,6 +67,7 @@ export const addUser = async (req, res) => {
 
         // Create new user with fetched stats
         const user = await User.create({
+            realName: stats.realName || username, // Use realName from API or fallback to username
             leetcodeUsername: username.toLowerCase(), // Store in lowercase for consistency
             totalSolved: stats.totalSolved,
             easySolved: stats.easySolved,
@@ -170,6 +171,7 @@ export const refreshUser = async (req, res) => {
             hardSolved: user.hardSolved
         };
 
+        user.realName = stats.realName || user.realName || user.leetcodeUsername; // Update realName from API
         user.totalSolved = stats.totalSolved;
         user.easySolved = stats.easySolved;
         user.mediumSolved = stats.mediumSolved;
