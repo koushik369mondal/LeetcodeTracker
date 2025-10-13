@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+// Use environment variable or fallback to deployed backend URL for production
+const API_URL = import.meta.env.VITE_API_URL || 
+    (import.meta.env.PROD 
+        ? 'https://leetcodetracker-b.onrender.com/api'
+        : '/api');
+
+console.log('API URL configured:', API_URL);
+console.log('Environment:', import.meta.env.PROD ? 'Production' : 'Development');
 
 // Add request interceptor for debugging
 axios.interceptors.request.use(request => {
