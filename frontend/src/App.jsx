@@ -15,28 +15,47 @@ function App() {
     const fetchUsers = async () => {
         try {
             const data = await api.getAllUsers();
-            setUsers(data);
+            // Ensure we always set an array
+            setUsers(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching users:', error);
+            // Set empty array on error to prevent crashes
+            setUsers([]);
         } finally {
             setLoading(false);
         }
     };
 
     const handleAddUser = async (username) => {
-        await api.addUser(username);
-        fetchUsers();
+        try {
+            await api.addUser(username);
+            fetchUsers();
+        } catch (error) {
+            console.error('Error adding user:', error);
+            // Re-throw to let AddUser component handle the error display
+            throw error;
+        }
     };
 
     const handleRefresh = async (username) => {
-        await api.refreshUser(username);
-        fetchUsers();
+        try {
+            await api.refreshUser(username);
+            fetchUsers();
+        } catch (error) {
+            console.error('Error refreshing user:', error);
+            // You might want to show a notification here
+        }
     };
 
     const handleDelete = async (username) => {
         if (window.confirm(`Are you sure you want to delete ${username}?`)) {
-            await api.deleteUser(username);
-            fetchUsers();
+            try {
+                await api.deleteUser(username);
+                fetchUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                // You might want to show a notification here
+            }
         }
     };
 

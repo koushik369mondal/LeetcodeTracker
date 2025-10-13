@@ -11,7 +11,7 @@ const AddUser = ({ onUserAdded }) => {
         setError('');
 
         try {
-            await onUserAdded(username);
+            await onUserAdded(username); // send raw string; backend will parse URL to username
             setUsername('');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to add user');
@@ -26,7 +26,7 @@ const AddUser = ({ onUserAdded }) => {
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    placeholder="Enter LeetCode username"
+                    placeholder="Enter LeetCode profile link or username (e.g., https://leetcode.com/u/username/ or username)"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
