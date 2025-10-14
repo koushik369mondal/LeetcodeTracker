@@ -4,6 +4,7 @@ import UserCard from './UserCard';
 const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [refreshStatus, setRefreshStatus] = useState('');
+    const [refreshProgress, setRefreshProgress] = useState({ current: 0, total: 0 });
     
     // Ensure users is always an array
     const usersList = Array.isArray(users) ? users : [];
@@ -16,19 +17,45 @@ const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
         }
 
         setRefreshing(true);
-        setRefreshStatus(`Refreshing ${usersList.length} users...`);
+        setRefreshProgress({ current: 0, total: usersList.length });
+        setRefreshStatus(`Starting refresh...`);
+
+        let successCount = 0;
+        let failureCount = 0;
+        const results = [];
 
         try {
-            const result = await onRefreshAll();
+            // Refresh users one by one to show progress
+            for (let i = 0; i < usersList.length; i++) {
+                const user = usersList[i];
+                setRefreshProgress({ current: i + 1, total: usersList.length });
+                setRefreshStatus(`Refreshing ${user.realName || user.leetcodeUsername} (${i + 1}/${usersList.length})...`);
+
+                try {
+                    await onRefresh(user.leetcodeUsername);
+                    successCount++;
+                    results.push({ username: user.leetcodeUsername, status: 'success' });
+                } catch (error) {
+                    failureCount++;
+                    results.push({ username: user.leetcodeUsername, status: 'failed', error: error.message });
+                }
+
+                // Add a small delay to show progress and be respectful to the API
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
             setRefreshStatus(
-                `✅ ${result.summary.success}/${result.summary.total} users refreshed successfully`
+                `✅ Completed! ${successCount}/${usersList.length} users refreshed successfully`
             );
         } catch (error) {
             setRefreshStatus(`❌ Failed to refresh users: ${error.message}`);
         } finally {
             setRefreshing(false);
-            // Clear status after 5 seconds
-            setTimeout(() => setRefreshStatus(''), 5000);
+            setRefreshProgress({ current: 0, total: 0 });
+            // Clear status after 7 seconds
+            setTimeout(() => {
+                setRefreshStatus('');
+            }, 7000);
         }
     };
 
@@ -45,6 +72,19 @@ const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
                         >
                             {refreshing ? '🔄 Refreshing...' : '🔄 Refresh All'}
                         </button>
+                        {refreshing && refreshProgress.total > 0 && (
+                            <div className="progress-container">
+                                <div className="progress-bar">
+                                    <div 
+                                        className="progress-fill" 
+                                        style={{ width: `${(refreshProgress.current / refreshProgress.total) * 100}%` }}
+                                    ></div>
+                                </div>
+                                <span className="progress-text">
+                                    {refreshProgress.current}/{refreshProgress.total}
+                                </span>
+                            </div>
+                        )}
                         {refreshStatus && (
                             <p className={`refresh-status ${refreshStatus.includes('❌') ? 'error' : 'success'}`}>
                                 {refreshStatus}
