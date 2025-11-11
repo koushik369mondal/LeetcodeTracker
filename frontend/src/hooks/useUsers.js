@@ -47,15 +47,14 @@ export const useUsers = () => {
         }
     };
 
-    // Refresh all users' stats
-    const handleRefreshAll = async () => {
+    // Refresh all users' stats (handled by Leaderboard component)
+    // This is just a wrapper for individual refreshes
+    const handleRefreshAll = async (username) => {
         try {
-            const result = await api.refreshAllUsers();
-            console.log('Refresh all completed:', result);
-            fetchUsers(); // Refresh the user list after bulk update
-            return result;
+            await api.refreshUser(username);
+            fetchUsers();
         } catch (error) {
-            console.error('Error refreshing all users:', error);
+            console.error('Error refreshing user:', error);
             throw error;
         }
     };

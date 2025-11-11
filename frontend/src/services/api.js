@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Use environment variable or fallback to deployed backend URL for production
-const API_URL = import.meta.env.VITE_API_URL || 
-    (import.meta.env.PROD 
+const API_URL = import.meta.env.VITE_API_URL ||
+    (import.meta.env.PROD
         ? 'https://leetcodetracker-b.onrender.com/api'
         : '/api');
 
@@ -44,7 +44,7 @@ export const getAllUsers = async () => {
         console.log('Fetching all users...');
         const response = await axios.get(`${API_URL}/users`);
         console.log('Raw response data:', response.data);
-        
+
         // Handle the new response structure that includes count and users array
         if (response.data && typeof response.data === 'object') {
             // If response has users property (new format), return that
@@ -58,7 +58,7 @@ export const getAllUsers = async () => {
                 return response.data;
             }
         }
-        
+
         console.warn('Unexpected response format, returning empty array');
         return [];
     } catch (error) {
@@ -83,20 +83,6 @@ export const deleteUser = async (username) => {
         return response.data;
     } catch (error) {
         console.error('Error in deleteUser API call:', error);
-        throw error;
-    }
-};
-
-export const refreshAllUsers = async () => {
-    try {
-        console.log('Starting bulk refresh of all users...');
-        const response = await axios.put(`${API_URL}/users/refresh-all`, {}, {
-            timeout: 300000 // 5 minutes timeout for bulk operation
-        });
-        console.log('Bulk refresh completed:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error in refreshAllUsers API call:', error);
         throw error;
     }
 };

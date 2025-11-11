@@ -1,5 +1,6 @@
 import AddUser from './components/AddUser';
 import Leaderboard from './components/Leaderboard';
+import Loading from './components/Loading';
 import { useUsers } from './hooks/useUsers';
 import './App.css';
 
@@ -14,7 +15,7 @@ function App() {
     } = useUsers();
 
     if (loading) {
-        return <div className="loading">Loading...</div>;
+        return <Loading />;
     }
 
     return (
