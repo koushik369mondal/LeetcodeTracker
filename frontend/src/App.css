@@ -80,7 +80,7 @@ body {
 
 .add-user-container button {
     padding: 12px 30px;
-    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
+    background: var(--lc-gold);
     color: white;
     border: none;
     border-radius: 8px;
@@ -270,8 +270,8 @@ body {
 }
 
 .rank-badge {
-    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
-    color: white;
+    background: var(--lc-gold);
+    color: var(--lc-bg);
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -355,7 +355,7 @@ body {
 }
 
 .actions button.view-profile {
-    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
+    background: var(--lc-gold);
     color: white;
 }
 
@@ -374,7 +374,7 @@ body {
 }
 
 .actions button.view-profile:hover {
-    box-shadow: 0 4px 12px rgba(78, 129, 175, 0.4);
+    box-shadow: 0 4px 12px rgba(240, 160, 26, 0.4);
 }
 
 .loading {
