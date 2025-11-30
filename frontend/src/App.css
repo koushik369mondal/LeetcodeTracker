@@ -1,3 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --lc-bg: #1B1C21;
+    --lc-card: #28292E;
+    --lc-border: #37383C;
+
+    --lc-text: #FFFFFF;
+    --lc-text-muted: #969699;
+    --lc-text-2: #C8C8C8;
+
+    --lc-gold: #F0A01A;
+    --lc-orange: #F27536;
+    --lc-green: #3CB44B;
+    --lc-blue: #4E81AF;
+
+    --lc-gray-btn: #646569;
+    --lc-shadow-dark: #0D0D10;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +28,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--lc-bg);
     min-height: 100vh;
     padding: 20px;
 }
@@ -18,16 +40,17 @@ body {
 }
 
 .add-user-container {
-    background: white;
+    background: var(--lc-card);
     padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(13, 13, 16, 0.25);
     margin-bottom: 30px;
+    border: 1px solid var(--lc-border);
 }
 
 .add-user-container h2 {
     margin-bottom: 20px;
-    color: #333;
+    color: var(--lc-text);
 }
 
 .add-user-container form {
@@ -38,20 +61,26 @@ body {
 .add-user-container input {
     flex: 1;
     padding: 12px 20px;
-    border: 2px solid #ddd;
+    border: 2px solid var(--lc-border);
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s;
+    background: var(--lc-bg);
+    color: var(--lc-text);
 }
 
 .add-user-container input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--lc-blue);
+}
+
+.add-user-container input::placeholder {
+    color: var(--lc-text-muted);
 }
 
 .add-user-container button {
     padding: 12px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -71,7 +100,7 @@ body {
 }
 
 .error {
-    color: #e74c3c;
+    color: var(--lc-orange);
     margin-top: 10px;
     font-weight: 500;
 }
@@ -82,7 +111,7 @@ body {
 }
 
 .leaderboard h1 {
-    color: white;
+    color: var(--lc-text);
     font-size: 2.5rem;
     margin-bottom: 20px;
 }
@@ -95,7 +124,7 @@ body {
 }
 
 .refresh-all-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: var(--lc-green);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -104,12 +133,12 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(13, 13, 16, 0.25);
 }
 
 .refresh-all-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 6px 20px rgba(60, 180, 75, 0.4);
 }
 
 .refresh-all-btn:disabled {
@@ -135,7 +164,7 @@ body {
 }
 
 .refresh-status {
-    color: white;
+    color: var(--lc-text);
     font-size: 14px;
     font-weight: 500;
     padding: 8px 16px;
@@ -144,13 +173,13 @@ body {
 }
 
 .refresh-status.success {
-    background: rgba(40, 167, 69, 0.2);
-    border: 1px solid rgba(40, 167, 69, 0.5);
+    background: rgba(60, 180, 75, 0.2);
+    border: 1px solid rgba(60, 180, 75, 0.5);
 }
 
 .refresh-status.error {
-    background: rgba(220, 53, 69, 0.2);
-    border: 1px solid rgba(220, 53, 69, 0.5);
+    background: rgba(242, 117, 54, 0.2);
+    border: 1px solid rgba(242, 117, 54, 0.5);
 }
 
 /* Progress Bar Styles */
@@ -166,18 +195,18 @@ body {
 .progress-bar {
     flex: 1;
     height: 8px;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--lc-border);
     border-radius: 4px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--lc-border);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: var(--lc-green);
     border-radius: 3px;
     transition: width 0.3s ease;
-    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 2px 4px rgba(13, 13, 16, 0.25);
     position: relative;
     overflow: hidden;
 }
@@ -204,7 +233,7 @@ body {
 }
 
 .progress-text {
-    color: white;
+    color: var(--lc-text);
     font-size: 14px;
     font-weight: 600;
     min-width: 45px;
@@ -213,7 +242,7 @@ body {
 
 .no-users {
     text-align: center;
-    color: white;
+    color: var(--lc-text-muted);
     font-size: 1.2rem;
     padding: 40px;
 }
@@ -224,23 +253,24 @@ body {
 }
 
 .user-card {
-    background: white;
-    border-radius: 15px;
+    background: var(--lc-card);
+    border-radius: 1rem;
     padding: 25px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(13, 13, 16, 0.25);
     display: flex;
     align-items: center;
     gap: 20px;
     transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--lc-border);
 }
 
 .user-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 40px rgba(13, 13, 16, 0.35);
 }
 
 .rank-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
     color: white;
     width: 60px;
     height: 60px;
@@ -258,13 +288,13 @@ body {
 }
 
 .user-info h3 {
-    color: #333;
+    color: var(--lc-text);
     margin-bottom: 5px;
     font-size: 1.3rem;
 }
 
 .user-info .username {
-    color: #666;
+    color: var(--lc-text-muted);
     font-size: 0.9rem;
     margin-bottom: 15px;
     font-style: italic;
@@ -284,26 +314,26 @@ body {
 }
 
 .stat .label {
-    color: #666;
+    color: var(--lc-text-muted);
     font-size: 0.9rem;
 }
 
 .stat .value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: var(--lc-text);
 }
 
 .stat.easy .value {
-    color: #00b8a3;
+    color: var(--lc-green);
 }
 
 .stat.medium .value {
-    color: #ffc01e;
+    color: var(--lc-gold);
 }
 
 .stat.hard .value {
-    color: #ef4743;
+    color: var(--lc-orange);
 }
 
 .actions {
@@ -325,12 +355,12 @@ body {
 }
 
 .actions button.view-profile {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--lc-blue) 0%, var(--lc-gold) 100%);
     color: white;
 }
 
 .actions button:not(.view-profile):not(.delete) {
-    background: #4CAF50;
+    background: var(--lc-green);
     color: white;
 }
 
@@ -344,8 +374,7 @@ body {
 }
 
 .actions button.view-profile:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
+    box-shadow: 0 4px 12px rgba(78, 129, 175, 0.4);
 }
 
 .loading {
@@ -394,11 +423,11 @@ body {
 .app-footer {
     margin-top: 40px;
     padding: 30px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+    background: var(--lc-card);
+    border-radius: 1rem;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--lc-border);
+    box-shadow: 0 10px 30px rgba(13, 13, 16, 0.25);
 }
 
 .footer-content {
@@ -406,7 +435,7 @@ body {
 }
 
 .footer-content p {
-    color: white;
+    color: var(--lc-text);
     font-size: 1.1rem;
     margin-bottom: 15px;
     font-weight: 500;
@@ -416,7 +445,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #24292e 0%, #333 100%);
+    background: var(--lc-gray-btn);
     color: white;
     text-decoration: none;
     padding: 12px 24px;
@@ -424,32 +453,32 @@ body {
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(13, 13, 16, 0.25);
+    border: 1px solid var(--lc-border);
 }
 
 .github-link:hover {
-    background: linear-gradient(135deg, #333 0%, #444 100%);
+    background: var(--lc-border);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(13, 13, 16, 0.35);
     color: white;
     text-decoration: none;
 }
 
 .footer-credits {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid var(--lc-border);
     padding-top: 15px;
     margin-top: 15px;
 }
 
 .footer-credits p {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--lc-text-muted);
     font-size: 0.9rem;
     margin: 0;
 }
 
 .footer-credits strong {
-    color: white;
+    color: var(--lc-text);
 }
 
 /* Mobile responsive footer */
