@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import { startCronJobs } from './config/cron.js';
 
 dotenv.config();
 
@@ -31,4 +32,6 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    // Start cron jobs
+    startCronJobs();
 });
