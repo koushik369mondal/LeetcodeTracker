@@ -72,6 +72,18 @@ export const useUsers = () => {
         }
     };
 
+    // Clear all cache
+    const handleClearCache = async () => {
+        try {
+            await api.clearCache();
+            // Optionally refresh users after clearing cache to get fresh data
+            // fetchUsers();
+        } catch (error) {
+            console.error('Error clearing cache:', error);
+            throw error;
+        }
+    };
+
     // Fetch users on component mount
     useEffect(() => {
         fetchUsers();
@@ -84,6 +96,7 @@ export const useUsers = () => {
         handleRefresh,
         handleRefreshAll,
         handleDelete,
+        handleClearCache,
         fetchUsers
     };
 };

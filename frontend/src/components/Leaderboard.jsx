@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import UserCard from './UserCard';
 
-const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
+const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete, onClearCache }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [refreshStatus, setRefreshStatus] = useState('');
     const [refreshProgress, setRefreshProgress] = useState({ current: 0, total: 0 });
-    
+    const [clearingCache, setClearingCache] = useState(false);
+
     // Ensure users is always an array
     const usersList = Array.isArray(users) ? users : [];
 
@@ -59,24 +60,55 @@ const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
         }
     };
 
+    const handleClearCache = async () => {
+        if (!window.confirm('Are you sure you want to clear all cached data? This will force fresh data fetches for all users.')) {
+            return;
+        }
+
+        setClearingCache(true);
+        setRefreshStatus('Clearing cache...');
+
+        try {
+            await onClearCache();
+            setRefreshStatus('✅ Cache cleared successfully! Data will be refreshed on next request.');
+        } catch (error) {
+            setRefreshStatus(`❌ Failed to clear cache: ${error.message}`);
+        } finally {
+            setClearingCache(false);
+            setTimeout(() => {
+                setRefreshStatus('');
+            }, 5000);
+        }
+    };
+
     return (
         <div className="leaderboard">
             <div className="leaderboard-header">
                 <h1>🏆 LeetCode Progress Tracker</h1>
                 {usersList.length > 0 && (
                     <div className="refresh-all-section">
-                        <button 
-                            className={`refresh-all-btn ${refreshing ? 'refreshing' : ''}`}
-                            onClick={handleRefreshAll}
-                            disabled={refreshing}
-                        >
-                            {refreshing ? '🔄 Refreshing...' : '🔄 Refresh All'}
-                        </button>
+                        <div>
+                            <button
+                                className={`refresh-all-btn ${refreshing ? 'refreshing' : ''}`}
+                                onClick={handleRefreshAll}
+                                disabled={refreshing || clearingCache}
+                            >
+                                {refreshing ? '🔄 Refreshing...' : '🔄 Refresh All'}
+                            </button>
+                            <button
+                                className={`clear-cache-btn ${clearingCache ? 'clearing' : ''}`}
+                                onClick={handleClearCache}
+                                disabled={refreshing || clearingCache}
+                                title="Clear all cached data to force fresh fetches"
+                            >
+                                {clearingCache ? '🧹 Clearing...' : '🧹 Clear Cache'}
+                            </button>
+                        </div>
                         {refreshing && refreshProgress.total > 0 && (
                             <div className="progress-container">
                                 <div className="progress-bar">
-                                    <div 
-                                        className="progress-fill" 
+                                    <div
+                                        className="progress-fill"
                                         style={{ width: `${(refreshProgress.current / refreshProgress.total) * 100}%` }}
                                     ></div>
                                 </div>
@@ -93,7 +125,7 @@ const Leaderboard = ({ users, onRefresh, onRefreshAll, onDelete }) => {
                     </div>
                 )}
             </div>
-            
+
             {usersList.length === 0 ? (
                 <p className="no-users">No users added yet. Add your first user!</p>
             ) : (

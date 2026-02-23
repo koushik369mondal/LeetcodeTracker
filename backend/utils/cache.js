@@ -5,23 +5,26 @@ import NodeCache from 'node-cache';
  * Cache service for storing LeetCode API responses
  * 
  * Configuration:
- * - stdTTL: 3600 seconds (1 hour) - default time-to-live for cached data
- * - checkperiod: 600 seconds (10 minutes) - how often to check for expired keys
+ * - stdTTL: 0 - no automatic expiration (cache persists indefinitely)
+ * - checkperiod: 0 - disabled automatic cleanup of expired keys
  * - useClones: false - for better performance, don't clone objects
+ * 
+ * Cache will persist for the lifetime of the application until manually cleared
+ * using the flush() method or by restarting the server.
  */
 class CacheService {
     constructor() {
-        // Main cache for LeetCode API responses
+        // Main cache for LeetCode API responses - persists indefinitely
         this.cache = new NodeCache({
-            stdTTL: 3600, // 1 hour default TTL
-            checkperiod: 600, // Check for expired keys every 10 minutes
+            stdTTL: 0, // No automatic expiration
+            checkperiod: 0, // Disable automatic cleanup
             useClones: false
         });
 
-        // Short-term cache for user data (5 minutes TTL)
+        // Secondary cache for additional data - also persists indefinitely
         this.shortCache = new NodeCache({
-            stdTTL: 300, // 5 minutes
-            checkperiod: 120, // Check every 2 minutes
+            stdTTL: 0, // No automatic expiration
+            checkperiod: 0, // Disable automatic cleanup
             useClones: false
         });
 

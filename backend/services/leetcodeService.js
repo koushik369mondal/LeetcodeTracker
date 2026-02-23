@@ -139,8 +139,8 @@ export async function fetchLeetCodeStats(username) {
       if (mappedData && Number.isFinite(mappedData.totalSolved) && mappedData.totalSolved >= 0) {
         console.log(`Successfully fetched data from ${provider.name}`);
 
-        // Cache the successful result (1 hour TTL)
-        cache.set(cacheKey, mappedData, 3600);
+        // Cache the successful result (indefinite TTL - persists until manually cleared)
+        cache.set(cacheKey, mappedData);
 
         return mappedData;
       }

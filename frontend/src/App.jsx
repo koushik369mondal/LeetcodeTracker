@@ -11,7 +11,8 @@ function App() {
         handleAddUser,
         handleRefresh,
         handleRefreshAll,
-        handleDelete
+        handleDelete,
+        handleClearCache
     } = useUsers();
 
     if (loading) {
@@ -26,6 +27,7 @@ function App() {
                 onRefresh={handleRefresh}
                 onRefreshAll={handleRefreshAll}
                 onDelete={handleDelete}
+                onClearCache={handleClearCache}
             />
             <footer className="app-footer">
                 <div className="footer-content">
