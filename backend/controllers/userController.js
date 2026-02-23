@@ -2,6 +2,7 @@
 import User from '../models/User.js';
 import { parseLeetCodeUsername } from '../utils/username.js';
 import { fetchLeetCodeStats } from '../services/leetcodeService.js';
+import cache from '../utils/cache.js';
 
 /**
  * Add a new LeetCode user to the tracker
@@ -10,32 +11,32 @@ import { fetchLeetCodeStats } from '../services/leetcodeService.js';
 export const addUser = async (req, res) => {
     try {
         const rawInput = req.body.leetcodeUsername;
-        
+
         // Validate input
         if (!rawInput || typeof rawInput !== 'string') {
-            return res.status(400).json({ 
-                message: 'LeetCode username or profile URL is required' 
+            return res.status(400).json({
+                message: 'LeetCode username or profile URL is required'
             });
         }
 
         // Parse and validate username from input
         const username = parseLeetCodeUsername(rawInput);
         if (!username) {
-            return res.status(400).json({ 
-                message: 'Invalid LeetCode username or profile URL. Please provide a valid LeetCode username or profile link.' 
+            return res.status(400).json({
+                message: 'Invalid LeetCode username or profile URL. Please provide a valid LeetCode username or profile link.'
             });
         }
 
         console.log(`Adding user: ${username} (from input: ${rawInput})`);
 
         // Check if user already exists (case insensitive)
-        const existingUser = await User.findOne({ 
+        const existingUser = await User.findOne({
             leetcodeUsername: { $regex: new RegExp(`^${username}$`, 'i') }
         });
-        
+
         if (existingUser) {
-            return res.status(400).json({ 
-                message: `User '${username}' already exists in the tracker` 
+            return res.status(400).json({
+                message: `User '${username}' already exists in the tracker`
             });
         }
 
@@ -45,23 +46,23 @@ export const addUser = async (req, res) => {
             stats = await fetchLeetCodeStats(username);
         } catch (apiError) {
             console.error(`API Error for user ${username}:`, apiError.message);
-            
+
             // Return specific error messages based on the API error
             if (apiError.message.includes('not found')) {
-                return res.status(404).json({ 
-                    message: `LeetCode user '${username}' not found. Please verify the username is correct.` 
+                return res.status(404).json({
+                    message: `LeetCode user '${username}' not found. Please verify the username is correct.`
                 });
             }
-            
-            return res.status(503).json({ 
-                message: `Unable to fetch data for '${username}'. ${apiError.message}` 
+
+            return res.status(503).json({
+                message: `Unable to fetch data for '${username}'. ${apiError.message}`
             });
         }
 
         // Validate fetched stats
         if (!stats || typeof stats.totalSolved !== 'number') {
-            return res.status(503).json({ 
-                message: `Invalid data received for user '${username}'. Please try again.` 
+            return res.status(503).json({
+                message: `Invalid data received for user '${username}'. Please try again.`
             });
         }
 
@@ -86,8 +87,8 @@ export const addUser = async (req, res) => {
 
     } catch (error) {
         console.error('Error in addUser:', error);
-        res.status(500).json({ 
-            message: 'Internal server error while adding user. Please try again.' 
+        res.status(500).json({
+            message: 'Internal server error while adding user. Please try again.'
         });
     }
 };
@@ -107,8 +108,8 @@ export const getAllUsers = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in getAllUsers:', error);
-        res.status(500).json({ 
-            message: 'Error fetching users from database' 
+        res.status(500).json({
+            message: 'Error fetching users from database'
         });
     }
 };
@@ -119,7 +120,7 @@ export const getAllUsers = async (req, res) => {
 export const refreshUser = async (req, res) => {
     try {
         const { username } = req.params;
-        
+
         if (!username) {
             return res.status(400).json({ message: 'Username parameter is required' });
         }
@@ -127,39 +128,44 @@ export const refreshUser = async (req, res) => {
         // Parse username in case a URL was provided
         const parsedUsername = parseLeetCodeUsername(username);
         if (!parsedUsername) {
-            return res.status(400).json({ 
-                message: 'Invalid username format' 
+            return res.status(400).json({
+                message: 'Invalid username format'
             });
         }
 
         console.log(`Refreshing user: ${parsedUsername}`);
 
         // Find user in database (case insensitive)
-        const user = await User.findOne({ 
+        const user = await User.findOne({
             leetcodeUsername: { $regex: new RegExp(`^${parsedUsername}$`, 'i') }
         });
-        
+
         if (!user) {
-            return res.status(404).json({ 
-                message: `User '${parsedUsername}' not found in tracker` 
+            return res.status(404).json({
+                message: `User '${parsedUsername}' not found in tracker`
             });
         }
 
         // Fetch updated stats from LeetCode API
         let stats;
         try {
+            // Invalidate cache before fetching fresh data
+            const cacheKey = `leetcode:${parsedUsername.toLowerCase()}`;
+            cache.del(cacheKey);
+            console.log(`Cache invalidated for: ${parsedUsername}`);
+
             stats = await fetchLeetCodeStats(parsedUsername);
         } catch (apiError) {
             console.error(`API Error refreshing user ${parsedUsername}:`, apiError.message);
-            
+
             if (apiError.message.includes('not found')) {
-                return res.status(404).json({ 
-                    message: `LeetCode user '${parsedUsername}' no longer exists or username has changed` 
+                return res.status(404).json({
+                    message: `LeetCode user '${parsedUsername}' no longer exists or username has changed`
                 });
             }
-            
-            return res.status(503).json({ 
-                message: `Unable to refresh data for '${parsedUsername}'. ${apiError.message}` 
+
+            return res.status(503).json({
+                message: `Unable to refresh data for '${parsedUsername}'. ${apiError.message}`
             });
         }
 
@@ -199,8 +205,8 @@ export const refreshUser = async (req, res) => {
 
     } catch (error) {
         console.error('Error in refreshUser:', error);
-        res.status(500).json({ 
-            message: 'Internal server error while refreshing user data' 
+        res.status(500).json({
+            message: 'Internal server error while refreshing user data'
         });
     }
 };
@@ -211,7 +217,7 @@ export const refreshUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { username } = req.params;
-        
+
         if (!username) {
             return res.status(400).json({ message: 'Username parameter is required' });
         }
@@ -219,33 +225,38 @@ export const deleteUser = async (req, res) => {
         // Parse username in case a URL was provided
         const parsedUsername = parseLeetCodeUsername(username);
         if (!parsedUsername) {
-            return res.status(400).json({ 
-                message: 'Invalid username format' 
+            return res.status(400).json({
+                message: 'Invalid username format'
             });
         }
 
         console.log(`Deleting user: ${parsedUsername}`);
 
         // Find and delete user (case insensitive)
-        const user = await User.findOneAndDelete({ 
+        const user = await User.findOneAndDelete({
             leetcodeUsername: { $regex: new RegExp(`^${parsedUsername}$`, 'i') }
         });
-        
+
         if (!user) {
-            return res.status(404).json({ 
-                message: `User '${parsedUsername}' not found in tracker` 
+            return res.status(404).json({
+                message: `User '${parsedUsername}' not found in tracker`
             });
         }
 
+        // Invalidate cache for deleted user
+        const cacheKey = `leetcode:${parsedUsername.toLowerCase()}`;
+        cache.del(cacheKey);
+        console.log(`Cache invalidated for deleted user: ${parsedUsername}`);
+
         console.log(`Successfully deleted user: ${parsedUsername}`);
-        res.status(200).json({ 
-            message: `User '${parsedUsername}' deleted successfully` 
+        res.status(200).json({
+            message: `User '${parsedUsername}' deleted successfully`
         });
 
     } catch (error) {
         console.error('Error in deleteUser:', error);
-        res.status(500).json({ 
-            message: 'Internal server error while deleting user' 
+        res.status(500).json({
+            message: 'Internal server error while deleting user'
         });
     }
 };
@@ -256,10 +267,10 @@ export const deleteUser = async (req, res) => {
 export const refreshAllUsers = async (req, res) => {
     try {
         console.log('Starting bulk refresh of all users...');
-        
+
         // Get all users from database
         const users = await User.find();
-        
+
         if (users.length === 0) {
             return res.status(200).json({
                 message: 'No users found to refresh',
@@ -268,7 +279,7 @@ export const refreshAllUsers = async (req, res) => {
         }
 
         console.log(`Found ${users.length} users to refresh`);
-        
+
         const results = [];
         let successCount = 0;
         let failureCount = 0;
@@ -277,10 +288,14 @@ export const refreshAllUsers = async (req, res) => {
         for (const user of users) {
             try {
                 console.log(`Refreshing user: ${user.leetcodeUsername}`);
-                
+
+                // Invalidate cache before fetching fresh data
+                const cacheKey = `leetcode:${user.leetcodeUsername.toLowerCase()}`;
+                cache.del(cacheKey);
+
                 // Fetch updated stats from LeetCode API
                 const stats = await fetchLeetCodeStats(user.leetcodeUsername);
-                
+
                 // Store previous stats for progress calculation
                 const previousStats = {
                     totalSolved: user.totalSolved,
@@ -327,7 +342,7 @@ export const refreshAllUsers = async (req, res) => {
 
             } catch (userError) {
                 console.error(`✗ Failed to refresh ${user.leetcodeUsername}:`, userError.message);
-                
+
                 results.push({
                     username: user.leetcodeUsername,
                     realName: user.realName || user.leetcodeUsername,
@@ -356,8 +371,48 @@ export const refreshAllUsers = async (req, res) => {
 
     } catch (error) {
         console.error('Error in refreshAllUsers:', error);
-        res.status(500).json({ 
-            message: 'Internal server error during bulk refresh' 
+        res.status(500).json({
+            message: 'Internal server error during bulk refresh'
+        });
+    }
+};
+
+/**
+ * Get cache statistics
+ */
+export const getCacheStats = async (req, res) => {
+    try {
+        const stats = cache.getStats();
+        const keys = cache.keys();
+
+        res.status(200).json({
+            stats,
+            cachedKeys: keys,
+            totalCachedItems: keys.length
+        });
+    } catch (error) {
+        console.error('Error in getCacheStats:', error);
+        res.status(500).json({
+            message: 'Error retrieving cache statistics'
+        });
+    }
+};
+
+/**
+ * Clear all cache
+ */
+export const clearCache = async (req, res) => {
+    try {
+        cache.flush();
+        console.log('Cache cleared by user request');
+
+        res.status(200).json({
+            message: 'All cache cleared successfully'
+        });
+    } catch (error) {
+        console.error('Error in clearCache:', error);
+        res.status(500).json({
+            message: 'Error clearing cache'
         });
     }
 };

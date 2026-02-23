@@ -1,9 +1,11 @@
 // backend/services/leetcodeService.js
 import axios from 'axios';
+import cache from '../utils/cache.js';
 
 /**
  * Primary LeetCode API service with fallback providers
  * Uses leetcode-api-pied.vercel.app as primary endpoint
+ * Implements caching to reduce API calls and improve performance
  */
 
 const providers = [
@@ -16,7 +18,7 @@ const providers = [
       // Handle the actual API response structure
       const submitStats = data.submitStats || {};
       const acSubmissionNum = submitStats.acSubmissionNum || [];
-      
+
       // Extract counts by difficulty
       const getCount = (difficulty) => {
         const stat = acSubmissionNum.find(item => item.difficulty === difficulty);
@@ -27,7 +29,7 @@ const providers = [
       const easySolved = getCount('Easy');
       const mediumSolved = getCount('Medium');
       const hardSolved = getCount('Hard');
-      
+
       // Calculate acceptance rate
       const totalSubmissionNum = data.submitStats?.totalSubmissionNum || [];
       const totalSubmissions = totalSubmissionNum.find(item => item.difficulty === 'All')?.count || 0;
@@ -44,7 +46,7 @@ const providers = [
       };
     }
   },
-  
+
   // Fallback API: leetcode-restful-api.vercel.app
   {
     name: 'leetcode-restful-api',
@@ -94,11 +96,23 @@ const providers = [
 /**
  * Fetches LeetCode statistics for a given username
  * Tries multiple API providers with fallback mechanism
+ * Uses caching to minimize API calls (1 hour TTL)
  */
 export async function fetchLeetCodeStats(username) {
   if (!username || typeof username !== 'string') {
     throw new Error('Valid username is required');
   }
+
+  // Check cache first
+  const cacheKey = `leetcode:${username.toLowerCase()}`;
+  const cachedData = cache.get(cacheKey);
+
+  if (cachedData) {
+    console.log(`Cache HIT for user: ${username}`);
+    return cachedData;
+  }
+
+  console.log(`Cache MISS for user: ${username}`);
 
   let lastError;
   let attemptedProviders = [];
@@ -106,7 +120,7 @@ export async function fetchLeetCodeStats(username) {
   for (const provider of providers) {
     try {
       console.log(`Attempting to fetch data from ${provider.name} for user: ${username}`);
-      
+
       let response;
       if (provider.method === 'POST') {
         response = await axios.post(provider.url(username), provider.body(username), {
@@ -120,19 +134,23 @@ export async function fetchLeetCodeStats(username) {
       }
 
       const mappedData = provider.map(response.data);
-      
+
       // Validate that we got meaningful data
       if (mappedData && Number.isFinite(mappedData.totalSolved) && mappedData.totalSolved >= 0) {
         console.log(`Successfully fetched data from ${provider.name}`);
+
+        // Cache the successful result (1 hour TTL)
+        cache.set(cacheKey, mappedData, 3600);
+
         return mappedData;
       }
-      
+
       throw new Error(`Invalid data structure from ${provider.name}`);
-      
+
     } catch (error) {
       attemptedProviders.push(provider.name);
       lastError = error;
-      
+
       // Check for specific error types
       if (error.response?.status === 404) {
         console.log(`User '${username}' not found on ${provider.name}`);
@@ -141,25 +159,25 @@ export async function fetchLeetCodeStats(username) {
       } else {
         console.log(`Error with ${provider.name}: ${error.message}`);
       }
-      
+
       // Continue to next provider
       continue;
     }
   }
 
   // If we get here, all providers failed
-  const errorMessage = lastError?.response?.status === 404 
+  const errorMessage = lastError?.response?.status === 404
     ? `LeetCode user '${username}' not found. Please check the username and try again.`
     : `Unable to fetch LeetCode data for '${username}'. All API providers (${attemptedProviders.join(', ')}) are currently unavailable. Please try again later.`;
-    
+
   throw new Error(errorMessage);
 }
 
 // Legacy class for backward compatibility
 class LeetCodeService {
-    async getUserStats(username) {
-        return fetchLeetCodeStats(username);
-    }
+  async getUserStats(username) {
+    return fetchLeetCodeStats(username);
+  }
 }
 
 const leetcodeService = new LeetCodeService();
