@@ -86,13 +86,3 @@ export const deleteUser = async (username) => {
         throw error;
     }
 };
-
-export const clearCache = async () => {
-    try {
-        const response = await axios.delete(`${API_URL}/cache`);
-        return response.data;
-    } catch (error) {
-        console.error('Error in clearCache API call:', error);
-        throw error;
-    }
-};
