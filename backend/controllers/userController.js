@@ -76,6 +76,7 @@ export const addUser = async (req, res) => {
             hardSolved: stats.hardSolved,
             ranking: stats.ranking,
             acceptanceRate: stats.acceptanceRate,
+            githubUrl: stats.githubUrl || '',
             lastUpdated: new Date()
         });
 
@@ -184,7 +185,10 @@ export const refreshUser = async (req, res) => {
         user.hardSolved = stats.hardSolved;
         user.ranking = stats.ranking;
         user.acceptanceRate = stats.acceptanceRate;
+        user.githubUrl = stats.githubUrl || user.githubUrl || '';
         user.lastUpdated = new Date();
+
+        console.log(`GitHub URL for ${parsedUsername}: "${user.githubUrl}"`);
 
         await user.save();
 

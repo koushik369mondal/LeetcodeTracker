@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    githubUrl: {
+        type: String,
+        default: ''
+    },
     lastUpdated: {
         type: Date,
         default: Date.now

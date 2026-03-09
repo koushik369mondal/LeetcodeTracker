@@ -35,6 +35,16 @@ const providers = [
       const totalSubmissions = totalSubmissionNum.find(item => item.difficulty === 'All')?.count || 0;
       const acceptanceRate = totalSubmissions > 0 ? ((totalSolved / totalSubmissions) * 100).toFixed(2) : 0;
 
+      // Check multiple possible locations for GitHub URL
+      const githubUrl = data.githubUrl ||
+        data.profile?.githubUrl ||
+        data.profile?.github ||
+        data.githubProfile ||
+        (data.matchedUser?.githubUrl) ||
+        null;
+
+      console.log('GitHub URL found in API response:', githubUrl);
+
       return {
         totalSolved,
         easySolved,
@@ -42,7 +52,8 @@ const providers = [
         hardSolved,
         ranking: data.profile?.ranking || 0,
         acceptanceRate: parseFloat(acceptanceRate),
-        realName: data.profile?.realName || data.username || ''
+        realName: data.profile?.realName || data.username || '',
+        githubUrl: (githubUrl && githubUrl !== 'null' && githubUrl !== 'undefined') ? githubUrl : ''
       };
     }
   },
@@ -64,6 +75,14 @@ const providers = [
       const totalSubmissions = data.submitStatsGlobal?.totalSubmissionNum?.find(x => x.difficulty === 'All')?.count || 0;
       const acceptanceRate = totalSubmissions > 0 ? ((totalSolved / totalSubmissions) * 100).toFixed(2) : 0;
 
+      // Check multiple possible locations for GitHub URL
+      const githubUrl = data.githubUrl ||
+        data.profile?.githubUrl ||
+        data.profile?.github ||
+        data.githubProfile ||
+        (data.matchedUser?.githubUrl) ||
+        null;
+
       return {
         totalSolved,
         easySolved: getCount('Easy'),
@@ -71,7 +90,8 @@ const providers = [
         hardSolved: getCount('Hard'),
         ranking: data.profile?.ranking || 0,
         acceptanceRate: parseFloat(acceptanceRate),
-        realName: data.profile?.realName || data.username || ''
+        realName: data.profile?.realName || data.username || '',
+        githubUrl: (githubUrl && githubUrl !== 'null' && githubUrl !== 'undefined') ? githubUrl : ''
       };
     }
   },
@@ -81,15 +101,26 @@ const providers = [
     name: 'tashif-api',
     url: (username) => `https://tashif.codes/projects/leetcode-stats-api/${username}`,
     method: 'GET',
-    map: (data) => ({
-      totalSolved: parseInt(data.totalSolved) || 0,
-      easySolved: parseInt(data.easySolved) || 0,
-      mediumSolved: parseInt(data.mediumSolved) || 0,
-      hardSolved: parseInt(data.hardSolved) || 0,
-      ranking: parseInt(data.ranking) || 0,
-      acceptanceRate: parseFloat(data.acceptanceRate) || 0,
-      realName: data.profile?.realName || data.realName || data.username || ''
-    })
+    map: (data) => {
+      // Check multiple possible locations for GitHub URL
+      const githubUrl = data.githubUrl ||
+        data.profile?.githubUrl ||
+        data.profile?.github ||
+        data.githubProfile ||
+        (data.matchedUser?.githubUrl) ||
+        null;
+
+      return {
+        totalSolved: parseInt(data.totalSolved) || 0,
+        easySolved: parseInt(data.easySolved) || 0,
+        mediumSolved: parseInt(data.mediumSolved) || 0,
+        hardSolved: parseInt(data.hardSolved) || 0,
+        ranking: parseInt(data.ranking) || 0,
+        acceptanceRate: parseFloat(data.acceptanceRate) || 0,
+        realName: data.profile?.realName || data.realName || data.username || '',
+        githubUrl: (githubUrl && githubUrl !== 'null' && githubUrl !== 'undefined') ? githubUrl : ''
+      };
+    }
   }
 ];
 

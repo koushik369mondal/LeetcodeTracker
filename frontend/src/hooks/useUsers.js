@@ -14,7 +14,10 @@ export const useUsers = () => {
         try {
             const data = await api.getAllUsers();
             // Ensure we always set an array
-            setUsers(Array.isArray(data) ? data : []);
+            const usersList = Array.isArray(data) ? data : [];
+            console.log('Fetched users:', usersList.length, 'users');
+            console.log('Users with GitHub:', usersList.filter(u => u.githubUrl).length);
+            setUsers(usersList);
         } catch (error) {
             console.error('Error fetching users:', error);
             // Set empty array on error to prevent crashes
@@ -28,7 +31,7 @@ export const useUsers = () => {
     const handleAddUser = async (username) => {
         try {
             await api.addUser(username);
-            fetchUsers();
+            await fetchUsers(); // Wait for fresh data to be fetched
         } catch (error) {
             console.error('Error adding user:', error);
             // Re-throw to let AddUser component handle the error display
@@ -39,8 +42,9 @@ export const useUsers = () => {
     // Refresh a single user's stats
     const handleRefresh = async (username) => {
         try {
-            await api.refreshUser(username);
-            fetchUsers();
+            const response = await api.refreshUser(username);
+            console.log('Refresh response for', username, ':', response);
+            await fetchUsers(); // Wait for fresh data to be fetched
         } catch (error) {
             console.error('Error refreshing user:', error);
             // You might want to show a notification here
@@ -52,7 +56,7 @@ export const useUsers = () => {
     const handleRefreshAll = async (username) => {
         try {
             await api.refreshUser(username);
-            fetchUsers();
+            await fetchUsers(); // Wait for fresh data to be fetched
         } catch (error) {
             console.error('Error refreshing user:', error);
             throw error;
@@ -64,7 +68,7 @@ export const useUsers = () => {
         if (window.confirm(`Are you sure you want to delete ${username}?`)) {
             try {
                 await api.deleteUser(username);
-                fetchUsers();
+                await fetchUsers(); // Wait for fresh data to be fetched
             } catch (error) {
                 console.error('Error deleting user:', error);
                 // You might want to show a notification here
