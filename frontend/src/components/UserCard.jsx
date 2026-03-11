@@ -29,7 +29,8 @@ const UserCard = ({ user, rank, onRefresh, onDelete }) => {
                         className="view-profile"
                         title={`View ${user.realName || user.leetcodeUsername}'s LeetCode profile`}
                     >
-                        � LeetCode
+                        <img src="/LeetCode_logo_black.png" alt="LeetCode" style={{ width: '16px', height: '16px', marginRight: '6px' }} />
+                        LeetCode
                     </button>
                     {user.githubUrl && user.githubUrl !== 'null' && user.githubUrl !== 'undefined' && (
                         <button
@@ -37,7 +38,8 @@ const UserCard = ({ user, rank, onRefresh, onDelete }) => {
                             className="view-profile"
                             title={`View ${user.realName || user.leetcodeUsername}'s GitHub profile`}
                         >
-                            🐙 GitHub
+                            <img src="/github_logo.png" alt="GitHub" style={{ width: '16px', height: '16px', marginRight: '6px' }} />
+                            GitHub
                         </button>
                     )}
                     <button onClick={() => onRefresh(user.leetcodeUsername)}>
