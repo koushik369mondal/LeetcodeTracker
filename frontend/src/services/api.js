@@ -3,7 +3,7 @@ import axios from 'axios';
 // Use environment variable or fallback to deployed backend URL for production
 const API_URL = import.meta.env.VITE_API_URL ||
     (import.meta.env.PROD
-        ? 'https://leetcodetracker-b.onrender.com/api'
+        ? 'https://leetcodetracker-back.onrender.com/api'
         : '/api');
 
 console.log('API URL configured:', API_URL);

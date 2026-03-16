@@ -5,21 +5,24 @@ A full-stack web application to track and compare LeetCode progress among users.
 ## 🌐 Live Demo
 
 - **Frontend**: https://leetcode-tracker-swart.vercel.app/
-- **Backend**: https://leetcodetracker-b.onrender.com/
+- **Backend**: https://leetcodetracker-back.onrender.com/
 
 ## 🚀 Deployment Configuration
 
 ### Frontend (Vercel)
+
 - Deployed at: https://leetcode-tracker-swart.vercel.app/
-- Uses environment variable: `VITE_API_URL=https://leetcodetracker-b.onrender.com/api`
+- Uses environment variable: `VITE_API_URL=https://leetcodetracker-back.onrender.com/api`
 
 ### Backend (Render)
-- Deployed at: https://leetcodetracker-b.onrender.com/
+
+- Deployed at: https://leetcodetracker-back.onrender.com/
 - Uses CORS configuration to allow frontend domain
 
 ## 🔧 Environment Variables
 
 ### Backend (.env)
+
 ```
 PORT=5000
 MONGODB_URI=mongodb+srv://...
@@ -27,13 +30,15 @@ FRONTEND_URL=https://leetcode-tracker-swart.vercel.app
 ```
 
 ### Frontend (.env.production)
+
 ```
-VITE_API_URL=https://leetcodetracker-b.onrender.com/api
+VITE_API_URL=https://leetcodetracker-back.onrender.com/api
 ```
 
 ## 📝 Development Setup
 
 ### Backend
+
 ```bash
 cd backend
 npm install
@@ -41,6 +46,7 @@ npm start
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
