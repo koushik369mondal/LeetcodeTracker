@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--lc-bg);
+    background: linear-gradient(140deg, #0f172a 0%, #131f35 100%);
 }
 
 .loading-spinner {
@@ -25,35 +25,35 @@
     height: 100%;
     border-radius: 50%;
     border: 4px solid transparent;
-    border-top-color: var(--lc-gold);
+    border-top-color: var(--lc-accent-2);
     animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    box-shadow: 0 4px 12px rgba(13, 13, 16, 0.25);
+    box-shadow: 0 4px 12px rgba(2, 6, 23, 0.45);
 }
 
 .spinner-ring:nth-child(1) {
     width: 100%;
     height: 100%;
-    border-top-color: var(--lc-gold);
+    border-top-color: var(--lc-accent-2);
     animation-delay: 0s;
 }
 
 .spinner-ring:nth-child(2) {
     width: 80%;
     height: 80%;
-    border-top-color: var(--lc-blue);
+    border-top-color: var(--lc-primary-2);
     animation-delay: -0.5s;
 }
 
 .spinner-ring:nth-child(3) {
     width: 60%;
     height: 60%;
-    border-top-color: var(--lc-green);
+    border-top-color: var(--lc-primary);
     animation-delay: -1s;
 }
 
 .spinner-text {
     position: absolute;
-    color: var(--lc-text);
+    color: var(--lc-text-secondary);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 2px;
@@ -91,7 +91,7 @@
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(240, 160, 26, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, transparent 70%);
     animation: glow 2s ease-in-out infinite;
 }
 
