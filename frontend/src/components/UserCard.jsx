@@ -45,9 +45,9 @@ const UserCard = ({ user, rank, onRefresh, onDelete }) => {
                     <button onClick={() => onRefresh(user.leetcodeUsername)}>
                         🔄 Refresh
                     </button>
-                    <button onClick={() => onDelete(user.leetcodeUsername)} className="delete">
+                    {/* <button onClick={() => onDelete(user.leetcodeUsername)} className="delete">
                         🗑️ Delete
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>
